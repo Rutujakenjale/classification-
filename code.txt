@@ -1,0 +1,29 @@
+
+
+
+
+aa<- read.csv("C:/Users/lenovo d/Desktop/Files/CTG.csv")
+aa
+View(aa)
+install.packages("party")
+library(party)
+install.packages("rpart")
+library(rpart)
+aa$NSP<- factor(aa$NSP)
+aa_Sam<- sample(2,nrow(aa), replace = TRUE, prob = c(.9, .1))
+aa_train<- aa[aa_Sam==1, ]
+aa_test<- aa[aa_Sam==2, ]
+aa_ctree1<- ctree(NSP ~ LB+AC+FM,data = aa_train)
+plot(aa_ctree1)
+aa_ctree<- ctree(NSP ~ LB+AC+FM,data = aa_train,controls = ctree_control(mincriterion = .90,minsplit = 450))
+aa_ctree
+plot(aa_ctree)
+Pred_val<- predict(aa_ctree, aa_test)
+Pred_val
+pred_actual_DF<- data.frame(Pred_val, aa_test$NSP)
+pred_actual_DF
+predict_table<- table(Pred_val,aa_test$NSP) ##confuction matrix
+predict_table
+acc<-sum(diag(predict_table))/sum(predict_table)*100
+acc
+dim(aa)
